@@ -1,5 +1,4 @@
 import CartItem from "../cart-item/model";
-import Product from "../product/model";
 import { policyFor } from "../policy";
 
 const index = async (req, res, next) => {
@@ -13,11 +12,8 @@ const index = async (req, res, next) => {
       });
     }
 
-    const items = await CartItem.find({ user: req.user._id }).populate(
-      "product"
-    );
-
-    return res.json(items);
+    const carts = await CartItem.find({ user: req.user._id }).populate(product);
+    return res.json(carts);
   } catch (err) {
     next(err);
   }
@@ -35,21 +31,20 @@ const update = async (req, res, next) => {
     }
 
     const { items } = req.body;
-    const productIds = items.map((item) => item._id);
+    const productIds = items.map((item) => item.product._id);
     const products = await Product.find({ _id: { $in: productIds } });
 
     const cartItems = items.map((item) => {
       const relatedProduct = products.map(
-        (product) => product._id.toString() === item._id
+        (product) => product._id.toString() === item.product._id
       );
       return {
-        _id: relatedProduct._id,
         product: relatedProduct._id,
-        user: req.user._id,
         name: relatedProduct.name,
         price: relatedProduct.price,
-        image_url: relatedProduct.image_url,
         qty: item.qty,
+        image_url: relatedProduct.image_url,
+        user: req.user._id,
       };
     });
 

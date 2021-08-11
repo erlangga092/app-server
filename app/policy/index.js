@@ -8,8 +8,7 @@ const policies = {
     builder.can("view", "DeliveryAddress");
     builder.can("create", "DeliveryAddress");
     builder.can("update", "DeliveryAddress", { user_id: user._id });
-    builder.can("read", "Cart");
-    builder.can("update", "Cart");
+    builder.can("delete", "DeliveryAddress", { user_id: user._id });
   },
   admin(user, builder) {
     builder.can("manage", "all");

@@ -48,7 +48,7 @@ const index = async (req, res, next) => {
       .skip(parseInt(skip, 10))
       .populate("category")
       .populate("tags");
-    return res.json(products);
+    return res.json({ data: products, count: count });
   } catch (err) {
     next(err);
   }

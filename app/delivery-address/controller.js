@@ -14,18 +14,17 @@ const index = async (req, res, next) => {
     }
 
     const { limit = 10, skip = 0 } = req.query;
+
     const count = await DeliveryAddress.find({
       user: req.user._id,
     }).countDocuments();
 
-    const deliveryAddress = await DeliveryAddress.find({
-      user: req.user._id,
-    })
+    const address = await DeliveryAddress.find({ user: req.user._id })
       .limit(parseInt(limit, 10))
       .skip(parseInt(skip, 10))
       .sort("-createdAt");
 
-    return res.json({ data: deliveryAddress, count: count });
+    return res.json(address);
   } catch (err) {
     next(err);
   }
@@ -42,12 +41,13 @@ const store = async (req, res, next) => {
       });
     }
 
-    const address = new DeliveryAddress({
+    const deliveryAddress = new DeliveryAddress({
       ...req.body,
       user: req.user._id,
     });
-    await address.save();
-    return res.json(address);
+
+    await deliveryAddress.save();
+    return res.json(deliveryAddress);
   } catch (err) {
     if (err && err.name === "ValidationError") {
       return res.json({
@@ -63,7 +63,7 @@ const store = async (req, res, next) => {
 const update = async (req, res, next) => {
   try {
     const policy = policyFor(req.user);
-    const address = await DeliveryAddress.findOne({ _id: req.params.id });
+    const address = await DeliveryAddress.find({ _id: req.params.id });
     const subjectAddress = subject("DeliveryAddress", {
       ...address,
       user_id: address.user,
@@ -78,9 +78,10 @@ const update = async (req, res, next) => {
 
     address = await DeliveryAddress.findOneAndUpdate(
       { _id: req.params.id },
-      req.body,
+      ...req.body,
       { new: true }
     );
+
     return res.json(address);
   } catch (err) {
     if (err && err.name === "ValidationError") {
@@ -97,7 +98,7 @@ const update = async (req, res, next) => {
 const destroy = async (req, res, next) => {
   try {
     const policy = policyFor(req.user);
-    const address = await DeliveryAddress.findOne({ _id: req.params.id });
+    const address = await DeliveryAddress.find({ _id: req.params.id });
     const subjectAddress = subject("DeliveryAddress", {
       ...address,
       user_id: address.user,
