@@ -13,8 +13,8 @@ import categoryRouter from "./app/category/router";
 import tagRouter from "./app/tag/router";
 import authRouter from "./app/auth/router";
 import wilayahRouter from "./app/wilayah/router";
-import deliveryRouter from "./app/delivery-address/router";
-import cartController from "./app/cart/router";
+import deliveryAddressRouter from "./app/delivery-address/router";
+import cartRouter from "./app/cart/router";
 
 const app = express();
 
@@ -36,8 +36,8 @@ app.use("/api", productRouter);
 app.use("/api", categoryRouter);
 app.use("/api", tagRouter);
 app.use("/api", wilayahRouter);
-app.use("/api", deliveryRouter);
-app.use("/api", cartController);
+app.use("/api", deliveryAddressRouter);
+app.use("/api", cartRouter);
 app.use("/auth", authRouter);
 
 // catch 404 and forward to error handler
